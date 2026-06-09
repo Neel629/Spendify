@@ -4,6 +4,7 @@ import { createClient } from '@/lib/supabase/server'
 import { QuickAdd } from '@/components/transactions/quick-add'
 import { LayoutDashboard, ReceiptText, Target, Users, LogOut, Gift, Flame } from 'lucide-react'
 import { SidebarNav } from '@/components/dashboard/sidebar-nav'
+import { MobileNav } from '@/components/dashboard/mobile-nav'
 
 export const dynamic = 'force-dynamic'
 export const revalidate = 0
@@ -41,6 +42,9 @@ export default async function DashboardLayout({
         </div>
         <SidebarNav userEmail={user.email} userName={profile?.full_name || user?.user_metadata?.full_name} />
       </aside>
+
+      {/* Mobile Navigation */}
+      <MobileNav />
 
       {/* Main Content */}
       <main className="flex-1 p-6 md:p-12 pb-24 md:pb-12 max-w-7xl mx-auto w-full">
