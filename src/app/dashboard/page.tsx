@@ -21,7 +21,26 @@ export default function DashboardHome() {
       const { data: { user } } = await supabase.auth.getUser()
       if (user) {
         const { data: profile } = await supabase.from('profiles').select('full_name').eq('id', user.id).single()
-        setUserName(profile?.full_name || user.user_metadata?.full_name || 'User')
+        
+        if (!profile) {
+          // Auto-create profile for legacy users who signed up before the schema existed
+          await supabase.from('profiles').insert({
+            id: user.id,
+            full_name: user.user_metadata?.full_name || 'User'
+          })
+          // Seed default categories
+          await supabase.from('categories').insert([
+            { user_id: user.id, name: 'Food & Drinks', emoji: '🍔', type: 'expense', is_default: true },
+            { user_id: user.id, name: 'Transport',     emoji: '🚌', type: 'expense', is_default: true },
+            { user_id: user.id, name: 'Shopping',      emoji: '🛍', type: 'expense', is_default: true },
+            { user_id: user.id, name: 'Other',         emoji: '💸', type: 'expense', is_default: true },
+            { user_id: user.id, name: 'Salary',        emoji: '💰', type: 'income',  is_default: true },
+            { user_id: user.id, name: 'Freelance',     emoji: '💻', type: 'income',  is_default: true },
+          ])
+          setUserName(user.user_metadata?.full_name || 'User')
+        } else {
+          setUserName(profile.full_name || user.user_metadata?.full_name || 'User')
+        }
       }
 
       // Fetch Budgets
