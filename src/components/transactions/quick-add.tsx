@@ -61,36 +61,61 @@ export function QuickAdd() {
                 </button>
               </div>
 
-              <div className="flex gap-2 mb-6 bg-secondary p-1 rounded-xl">
+              <div className="flex p-1 mb-8 bg-background border border-border rounded-xl">
                 <button 
                   onClick={() => setType('expense')}
-                  className={`flex-1 py-2 rounded-lg text-sm font-medium transition-all ${type === 'expense' ? 'bg-background shadow-sm text-foreground' : 'text-muted-foreground hover:text-foreground'}`}
+                  className={`flex-1 py-2 rounded-lg text-sm font-semibold transition-all ${type === 'expense' ? 'bg-card shadow-sm text-foreground' : 'text-muted-foreground hover:text-foreground'}`}
                 >
                   Expense
                 </button>
                 <button 
                   onClick={() => setType('income')}
-                  className={`flex-1 py-2 rounded-lg text-sm font-medium transition-all ${type === 'income' ? 'bg-background shadow-sm text-foreground' : 'text-muted-foreground hover:text-foreground'}`}
+                  className={`flex-1 py-2 rounded-lg text-sm font-semibold transition-all ${type === 'income' ? 'bg-card shadow-sm text-foreground' : 'text-muted-foreground hover:text-foreground'}`}
                 >
                   Income
                 </button>
               </div>
 
-              <form onSubmit={handleSubmit} className="space-y-5">
-                <div className="space-y-2">
-                  <Label className="text-muted-foreground text-xs uppercase tracking-wider font-semibold">Amount</Label>
-                  <Input name="amount" type="number" step="0.01" required placeholder="0.00" className="text-3xl font-mono h-16 bg-background border-none shadow-none px-0 focus-visible:ring-0 text-foreground" />
-                  <div className="h-px w-full bg-border" />
+              <form onSubmit={handleSubmit} className="space-y-6">
+                <div>
+                  <Label className="text-muted-foreground text-xs uppercase tracking-wider font-semibold mb-2 block">Amount</Label>
+                  <div className="flex items-center text-4xl font-light text-foreground border-b border-border/60 pb-2 transition-colors focus-within:border-emerald-500">
+                    <span className="text-muted-foreground mr-2">$</span>
+                    <input 
+                      name="amount" 
+                      type="number" 
+                      step="0.01" 
+                      required 
+                      placeholder="0.00" 
+                      className="bg-transparent w-full focus:outline-none placeholder:text-muted-foreground/30 font-mono" 
+                    />
+                  </div>
                 </div>
+
                 <div className="space-y-2">
                   <Label className="text-muted-foreground text-xs uppercase tracking-wider font-semibold">Title</Label>
-                  <Input name="title" type="text" required placeholder="Morning Coffee" className="bg-secondary/50 border-transparent focus-visible:border-border h-12 rounded-xl" />
+                  <input 
+                    name="title" 
+                    type="text" 
+                    required 
+                    placeholder="e.g. Morning Coffee" 
+                    className="w-full h-12 px-4 rounded-xl bg-background border border-border text-foreground focus:outline-none focus:ring-1 focus:ring-emerald-500 transition-all placeholder:text-muted-foreground/50" 
+                  />
                 </div>
+
                 <div className="space-y-2">
                   <Label className="text-muted-foreground text-xs uppercase tracking-wider font-semibold">Date</Label>
-                  <Input name="date" type="date" required defaultValue={new Date().toISOString().split('T')[0]} className="bg-secondary/50 border-transparent focus-visible:border-border h-12 rounded-xl" />
+                  <input 
+                    name="date" 
+                    type="date" 
+                    required 
+                    defaultValue={new Date().toISOString().split('T')[0]} 
+                    className="w-full h-12 px-4 rounded-xl bg-background border border-border text-foreground focus:outline-none focus:ring-1 focus:ring-emerald-500 transition-all cursor-pointer" 
+                    style={{ colorScheme: 'dark' }}
+                  />
                 </div>
-                <Button type="submit" disabled={loading} className="w-full h-14 text-base font-semibold rounded-xl mt-6">
+
+                <Button type="submit" disabled={loading} className="w-full h-14 text-base font-semibold rounded-xl mt-8 bg-emerald-500 hover:bg-emerald-600 text-white shadow-lg shadow-emerald-500/20 transition-all">
                   {loading ? 'Saving...' : 'Save Transaction'}
                 </Button>
               </form>
