@@ -30,18 +30,18 @@ export async function POST(request: Request) {
     const body = await request.json()
     const { type, amount, title, date, category_id } = body
 
+    // If no category_id was provided, find a default one
     let finalCategoryId = category_id
     if (!finalCategoryId) {
-      // Find a default category
-      const { data: cat } = await supabase
+      const { data: defaultCat } = await supabase
         .from('categories')
         .select('id')
         .eq('user_id', user.id)
         .eq('type', type)
+        .eq('is_default', true)
         .limit(1)
         .single()
-      
-      finalCategoryId = cat?.id || null
+      finalCategoryId = defaultCat?.id || null
     }
 
     const { data, error } = await supabase
@@ -54,45 +54,17 @@ export async function POST(request: Request) {
         category_id: finalCategoryId,
         date: date || new Date().toISOString().split('T')[0]
       })
-      .select('*')
+      .select('*, categories(name, emoji, color)')
       .single()
 
     if (error) {
-      // If the profile is missing (user created before schema.sql was run), create it automatically
-      if (error.message?.includes('transactions_user_id_fkey')) {
-        console.log("Auto-creating missing legacy profile for user:", user.id)
-        await supabase.from('profiles').insert({
-          id: user.id,
-          full_name: user.user_metadata?.full_name || 'User'
-        })
-        
-        // Also auto-create a default category so it doesn't fail
-        const { data: fallbackCat } = await supabase.from('categories').insert({
-          user_id: user.id,
-          name: 'General',
-          type: 'expense'
-        }).select('id').single()
-
-        // Retry the transaction insert
-        const { data: retryData, error: retryError } = await supabase.from('transactions').insert({
-          user_id: user.id,
-          type,
-          amount,
-          title,
-          category_id: fallbackCat?.id,
-          date: date || new Date().toISOString().split('T')[0]
-        }).select('*').single()
-        
-        if (retryError) throw retryError
-        return NextResponse.json(retryData)
-      }
-      console.error("SUPABASE INSERT ERROR:", error)
-      return NextResponse.json({ error: error.message, details: error.details, hint: error.hint }, { status: 400 })
+      console.error("Transaction insert error:", error)
+      return NextResponse.json({ error: error.message }, { status: 400 })
     }
-    
+
     return NextResponse.json(data)
   } catch (error: any) {
-    console.error("SERVER ERROR:", error)
+    console.error("Server error:", error)
     return NextResponse.json({ error: error.message }, { status: 500 })
   }
 }
