@@ -13,6 +13,9 @@ const jetbrainsMono = JetBrains_Mono({
   variable: '--font-mono',
 });
 
+export const dynamic = 'force-dynamic'
+export const revalidate = 0
+
 export const metadata: Metadata = {
   title: "Spendify - Gen-Z Expense Tracker",
   description: "Your money. No cap. A minimal Gen-Z expense tracker.",

@@ -5,6 +5,9 @@ import { QuickAdd } from '@/components/transactions/quick-add'
 import { LayoutDashboard, ReceiptText, Target, Users, LogOut, Gift, Flame } from 'lucide-react'
 import { SidebarNav } from '@/components/dashboard/sidebar-nav'
 
+export const dynamic = 'force-dynamic'
+export const revalidate = 0
+
 export default async function DashboardLayout({
   children,
 }: {
