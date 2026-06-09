@@ -11,7 +11,7 @@ export async function GET(request: Request) {
 
   const { data, error } = await supabase
     .from('transactions')
-    .select('*, categories(name, emoji, color)')
+    .select('*')
     .eq('user_id', user.id)
     .order('date', { ascending: false })
     .order('created_at', { ascending: false })
@@ -28,7 +28,7 @@ export async function POST(request: Request) {
 
   try {
     const body = await request.json()
-    const { type, amount, title, category_id, date, note } = body
+    const { type, amount, title, date, category } = body
 
     const { data, error } = await supabase
       .from('transactions')
@@ -37,11 +37,10 @@ export async function POST(request: Request) {
         type,
         amount,
         title,
-        category_id,
-        date: date || new Date().toISOString().split('T')[0],
-        note
+        category: category || 'General',
+        date: date || new Date().toISOString().split('T')[0]
       })
-      .select('*, categories(name, emoji, color)')
+      .select('*')
       .single()
 
     if (error) throw error
