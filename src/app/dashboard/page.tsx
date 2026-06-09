@@ -5,17 +5,30 @@ import { useAppStore } from '@/store/useAppStore'
 import { Card } from '@/components/ui/card'
 import { LineChart, Line, PieChart, Pie, Cell, XAxis, YAxis, Tooltip, ResponsiveContainer } from 'recharts'
 import { ArrowUpRight, ArrowDownRight, Wallet, TrendingUp, Shield, Laptop, Plane, CalendarDays } from 'lucide-react'
+import { createClient } from '@/lib/supabase/client'
+import { useState } from 'react'
 
 export default function DashboardHome() {
   const { transactions, isLoading, setTransactions } = useAppStore()
 
+  const [userName, setUserName] = useState('User')
+
   useEffect(() => {
-    const fetchTx = async () => {
+    const fetchUserAndTx = async () => {
+      // Fetch User Name
+      const supabase = createClient()
+      const { data: { user } } = await supabase.auth.getUser()
+      if (user) {
+        const { data: profile } = await supabase.from('profiles').select('full_name').eq('id', user.id).single()
+        setUserName(profile?.full_name || user.user_metadata?.full_name || 'User')
+      }
+
+      // Fetch Transactions
       const res = await fetch('/api/transactions')
       const data = await res.json()
       if (Array.isArray(data)) setTransactions(data)
     }
-    fetchTx()
+    fetchUserAndTx()
   }, [setTransactions])
 
   // Process data for Line chart (Cash Flow)
@@ -53,7 +66,7 @@ export default function DashboardHome() {
       <div className="flex flex-col md:flex-row justify-between md:items-end gap-4">
         <div>
           <h1 className="text-3xl font-bold tracking-tight text-foreground flex items-center gap-2">
-            Good evening, Neel! <span className="text-2xl">👋</span>
+            Good evening, {userName}! <span className="text-2xl">👋</span>
           </h1>
           <p className="text-muted-foreground mt-1">Here's what's happening with your finances today.</p>
         </div>

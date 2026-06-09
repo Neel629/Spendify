@@ -39,8 +39,7 @@ export default async function DashboardLayout({
           <div className="text-emerald-500">🌱</div>
           <div className="font-bold text-xl tracking-tight text-foreground">Spendify</div>
         </div>
-        
-        <SidebarNav userEmail={user.email} userName={profile?.full_name} />
+        <SidebarNav userEmail={user.email} userName={profile?.full_name || user?.user_metadata?.full_name} />
       </aside>
 
       {/* Main Content */}
