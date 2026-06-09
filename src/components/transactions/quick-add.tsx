@@ -30,12 +30,18 @@ export function QuickAdd() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(payload)
       })
-      if (!res.ok) throw new Error('Failed to save')
+      
+      if (!res.ok) {
+        const errData = await res.json()
+        throw new Error(errData.error || errData.details || 'Failed to save')
+      }
+      
       const newTx = await res.json()
       addTransaction(newTx)
       setIsOpen(false)
-    } catch (err) {
+    } catch (err: any) {
       console.error(err)
+      alert("Error saving transaction: " + err.message)
     } finally {
       setLoading(false)
     }

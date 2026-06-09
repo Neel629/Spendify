@@ -54,12 +54,17 @@ export async function POST(request: Request) {
         category_id: finalCategoryId,
         date: date || new Date().toISOString().split('T')[0]
       })
-      .select('*, categories(name, emoji, color)')
+      .select('*')
       .single()
 
-    if (error) throw error
+    if (error) {
+      console.error("SUPABASE INSERT ERROR:", error)
+      return NextResponse.json({ error: error.message, details: error.details, hint: error.hint }, { status: 400 })
+    }
+    
     return NextResponse.json(data)
   } catch (error: any) {
+    console.error("SERVER ERROR:", error)
     return NextResponse.json({ error: error.message }, { status: 500 })
   }
 }
