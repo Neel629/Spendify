@@ -67,10 +67,10 @@ export default function LoginPage() {
           <div className="inline-block p-4 bg-white rounded-2xl shadow-sm border border-border/50 mb-8">
             <div className="h-12 w-12 bg-primary/10 rounded-full flex items-center justify-center text-2xl">✨</div>
           </div>
-          <h2 className="text-3xl font-bold tracking-tight text-foreground leading-tight mb-4">
-            "Finally, an expense tracker that doesn't feel like a spreadsheet."
+          <h2 className="text-3xl font-bold tracking-tight text-slate-900 leading-tight mb-4">
+            &quot;Finally, an expense tracker that doesn&apos;t feel like a spreadsheet.&quot;
           </h2>
-          <p className="text-muted-foreground text-lg">
+          <p className="text-slate-600 text-lg">
             Join thousands of users managing their money with clarity and zero clutter.
           </p>
         </div>
