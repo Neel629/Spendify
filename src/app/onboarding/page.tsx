@@ -6,7 +6,6 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card'
 
 export default function OnboardingPage() {
   const [error, setError] = useState<string | null>(null)
@@ -25,47 +24,99 @@ export default function OnboardingPage() {
   }
 
   return (
-    <div className="flex min-h-screen items-center justify-center p-4">
-      <Card className="w-full max-w-md border-border bg-card">
-        <CardHeader className="space-y-1">
-          <CardTitle className="text-3xl font-bold tracking-tight text-primary">Welcome to Spendify! 🎉</CardTitle>
-          <CardDescription className="text-muted-foreground">
-            Let's get your profile set up so you can start tracking.
-          </CardDescription>
-        </CardHeader>
-        <form onSubmit={handleSubmit}>
-          <CardContent className="space-y-4">
-            {error && <div className="text-sm font-medium text-destructive">{error}</div>}
+    <div className="flex min-h-screen items-center justify-center p-6 bg-background">
+      <div className="w-full max-w-lg">
+        {/* Header */}
+        <div className="text-center mb-10">
+          <div className="inline-flex items-center justify-center h-16 w-16 rounded-2xl bg-emerald-500/10 mb-6">
+            <span className="text-3xl">🌱</span>
+          </div>
+          <h1 className="text-3xl font-bold tracking-tight text-foreground mb-2">
+            Welcome to Spendify
+          </h1>
+          <p className="text-muted-foreground text-base">
+            Let&apos;s set up your profile so you can start tracking your finances.
+          </p>
+        </div>
+
+        {/* Card */}
+        <div className="bg-card border border-border rounded-2xl p-8 shadow-sm">
+          <form onSubmit={handleSubmit} className="space-y-7">
+            {error && (
+              <div className="text-sm font-medium text-destructive bg-destructive/10 p-3 rounded-lg">
+                {error}
+              </div>
+            )}
+
+            {/* Full Name */}
             <div className="space-y-2">
-              <Label htmlFor="full_name">How should we call you?</Label>
-              <Input id="full_name" name="full_name" type="text" placeholder="Your Name" required className="bg-input border-border" />
+              <Label htmlFor="full_name" className="text-xs uppercase tracking-wider font-semibold text-muted-foreground">
+                Your Name
+              </Label>
+              <Input
+                id="full_name"
+                name="full_name"
+                type="text"
+                placeholder="e.g. Neel Prajapati"
+                required
+                className="h-12 bg-background border border-border rounded-xl px-4 focus-visible:ring-1 focus-visible:ring-emerald-500 focus-visible:border-emerald-500 transition-all text-base"
+              />
             </div>
+
+            {/* Currency */}
             <div className="space-y-2">
-              <Label htmlFor="currency">Primary Currency</Label>
+              <Label htmlFor="currency" className="text-xs uppercase tracking-wider font-semibold text-muted-foreground">
+                Primary Currency
+              </Label>
               <Select name="currency" defaultValue="INR">
-                <SelectTrigger className="bg-input border-border">
+                <SelectTrigger className="h-12 bg-background border border-border rounded-xl px-4 focus:ring-1 focus:ring-emerald-500 text-base">
                   <SelectValue placeholder="Select currency" />
                 </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="INR">₹ INR (Indian Rupee)</SelectItem>
-                  <SelectItem value="USD">$ USD (US Dollar)</SelectItem>
-                  <SelectItem value="EUR">€ EUR (Euro)</SelectItem>
-                  <SelectItem value="GBP">£ GBP (British Pound)</SelectItem>
+                <SelectContent className="bg-card border border-border">
+                  <SelectItem value="INR">₹ INR – Indian Rupee</SelectItem>
+                  <SelectItem value="USD">$ USD – US Dollar</SelectItem>
+                  <SelectItem value="EUR">€ EUR – Euro</SelectItem>
+                  <SelectItem value="GBP">£ GBP – British Pound</SelectItem>
                 </SelectContent>
               </Select>
             </div>
+
+            {/* Monthly Budget */}
             <div className="space-y-2">
-              <Label htmlFor="monthly_budget">Target Monthly Budget</Label>
-              <Input id="monthly_budget" name="monthly_budget" type="number" placeholder="10000" min="0" step="0.01" required className="bg-input border-border" />
+              <Label htmlFor="monthly_budget" className="text-xs uppercase tracking-wider font-semibold text-muted-foreground">
+                Target Monthly Budget
+              </Label>
+              <div className="relative">
+                <span className="absolute left-4 top-1/2 -translate-y-1/2 text-muted-foreground text-base">₹</span>
+                <Input
+                  id="monthly_budget"
+                  name="monthly_budget"
+                  type="number"
+                  placeholder="10,000"
+                  min="0"
+                  step="1"
+                  required
+                  className="h-12 bg-background border border-border rounded-xl pl-9 pr-4 focus-visible:ring-1 focus-visible:ring-emerald-500 focus-visible:border-emerald-500 transition-all text-base"
+                />
+              </div>
+              <p className="text-xs text-muted-foreground">You can always change this later in Settings.</p>
             </div>
-          </CardContent>
-          <CardFooter>
-            <Button type="submit" className="w-full bg-accent text-accent-foreground hover:bg-accent/90" disabled={loading}>
-              {loading ? 'Saving...' : 'Get Started'}
+
+            {/* Submit */}
+            <Button
+              type="submit"
+              className="w-full h-12 text-base font-semibold rounded-xl bg-emerald-500 hover:bg-emerald-600 text-white transition-colors shadow-[0_0_20px_rgba(16,185,129,0.25)]"
+              disabled={loading}
+            >
+              {loading ? 'Setting up...' : 'Get Started →'}
             </Button>
-          </CardFooter>
-        </form>
-      </Card>
+          </form>
+        </div>
+
+        <p className="text-center text-xs text-muted-foreground mt-6">
+          Your data is encrypted and securely stored.
+        </p>
+      </div>
     </div>
   )
 }
