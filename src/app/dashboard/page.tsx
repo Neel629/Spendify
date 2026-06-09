@@ -12,6 +12,7 @@ export default function DashboardHome() {
   const { transactions, isLoading, setTransactions } = useAppStore()
 
   const [userName, setUserName] = useState('User')
+  const [budgets, setBudgets] = useState<any[]>([])
 
   useEffect(() => {
     const fetchUserAndTx = async () => {
@@ -23,10 +24,29 @@ export default function DashboardHome() {
         setUserName(profile?.full_name || user.user_metadata?.full_name || 'User')
       }
 
+      // Fetch Budgets
+      try {
+        const bRes = await fetch('/api/budgets')
+        const bData = await bRes.json()
+        if (Array.isArray(bData)) setBudgets(bData)
+      } catch (err) {
+        console.error('Failed to fetch budgets:', err)
+      }
+
       // Fetch Transactions
-      const res = await fetch('/api/transactions')
-      const data = await res.json()
-      if (Array.isArray(data)) setTransactions(data)
+      try {
+        const res = await fetch('/api/transactions')
+        const data = await res.json()
+        if (Array.isArray(data)) {
+          setTransactions(data)
+        } else {
+          console.error('Failed to fetch transactions:', data.error)
+          setTransactions([])
+        }
+      } catch (err) {
+        console.error('Fetch error:', err)
+        setTransactions([])
+      }
     }
     fetchUserAndTx()
   }, [setTransactions])
@@ -184,67 +204,47 @@ export default function DashboardHome() {
             </Card>
           </div>
 
-          {/* Savings Goals */}
+          {/* Monthly Budgets */}
           <Card className="p-6 bg-card border-border">
             <div className="flex justify-between items-center mb-6">
-              <h2 className="text-lg font-bold text-foreground">Savings Goals</h2>
-              <button className="text-sm text-emerald-500 font-medium">View All Goals</button>
+              <h2 className="text-lg font-bold text-foreground">Monthly Budgets</h2>
+              <button className="text-sm text-emerald-500 font-medium">Manage Budgets</button>
             </div>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-              <div className="space-y-4">
-                <div className="flex items-center gap-4">
-                  <div className="h-12 w-12 rounded-xl bg-blue-500/10 flex items-center justify-center">
-                    <Shield className="h-6 w-6 text-blue-500" />
-                  </div>
-                  <div>
-                    <h3 className="font-semibold text-foreground">Emergency Fund</h3>
-                    <p className="text-sm text-muted-foreground">$1,200 of $2,000</p>
-                  </div>
-                </div>
-                <div className="flex items-center gap-4">
-                  <div className="flex-1 h-2 bg-secondary rounded-full overflow-hidden">
-                    <div className="h-full bg-blue-500 w-[60%] rounded-full"></div>
-                  </div>
-                  <span className="text-xs font-bold text-muted-foreground">60%</span>
-                </div>
+            
+            {budgets.length > 0 ? (
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+                {budgets.map((budget: any) => {
+                  const percent = Math.min(100, Math.round((budget.spent / budget.amount) * 100))
+                  const isOver = budget.spent > budget.amount
+                  return (
+                    <div key={budget.id} className="space-y-4">
+                      <div className="flex items-center gap-4">
+                        <div className="h-12 w-12 rounded-xl flex items-center justify-center text-2xl" style={{ backgroundColor: `${budget.categories?.color || '#3B82F6'}1a` }}>
+                          {budget.categories?.emoji || '🎯'}
+                        </div>
+                        <div>
+                          <h3 className="font-semibold text-foreground">{budget.categories?.name || 'Category'}</h3>
+                          <p className="text-sm text-muted-foreground">${budget.spent.toFixed(2)} of ${budget.amount.toFixed(2)}</p>
+                        </div>
+                      </div>
+                      <div className="flex items-center gap-4">
+                        <div className="flex-1 h-2 bg-secondary rounded-full overflow-hidden">
+                          <div className={`h-full rounded-full ${isOver ? 'bg-red-500' : 'bg-emerald-500'}`} style={{ width: `${percent}%` }}></div>
+                        </div>
+                        <span className={`text-xs font-bold ${isOver ? 'text-red-500' : 'text-muted-foreground'}`}>{percent}%</span>
+                      </div>
+                    </div>
+                  )
+                })}
               </div>
-              
-              <div className="space-y-4">
-                <div className="flex items-center gap-4">
-                  <div className="h-12 w-12 rounded-xl bg-blue-500/10 flex items-center justify-center">
-                    <Laptop className="h-6 w-6 text-blue-500" />
-                  </div>
-                  <div>
-                    <h3 className="font-semibold text-foreground">New Laptop</h3>
-                    <p className="text-sm text-muted-foreground">$850 of $1,500</p>
-                  </div>
-                </div>
-                <div className="flex items-center gap-4">
-                  <div className="flex-1 h-2 bg-secondary rounded-full overflow-hidden">
-                    <div className="h-full bg-blue-500 w-[43%] rounded-full"></div>
-                  </div>
-                  <span className="text-xs font-bold text-muted-foreground">43%</span>
-                </div>
+            ) : (
+              <div className="py-8 text-center border border-dashed border-border rounded-xl">
+                <p className="text-muted-foreground mb-4">No budgets set for this month.</p>
+                <button className="text-sm font-semibold bg-secondary/50 text-foreground px-4 py-2 rounded-lg hover:bg-secondary transition-colors">
+                  Create a Budget
+                </button>
               </div>
-
-              <div className="space-y-4">
-                <div className="flex items-center gap-4">
-                  <div className="h-12 w-12 rounded-xl bg-blue-500/10 flex items-center justify-center">
-                    <Plane className="h-6 w-6 text-blue-500" />
-                  </div>
-                  <div>
-                    <h3 className="font-semibold text-foreground">Vacation</h3>
-                    <p className="text-sm text-muted-foreground">$1,350 of $3,000</p>
-                  </div>
-                </div>
-                <div className="flex items-center gap-4">
-                  <div className="flex-1 h-2 bg-secondary rounded-full overflow-hidden">
-                    <div className="h-full bg-blue-500 w-[45%] rounded-full"></div>
-                  </div>
-                  <span className="text-xs font-bold text-muted-foreground">45%</span>
-                </div>
-              </div>
-            </div>
+            )}
           </Card>
 
           {/* Recent Transactions Table */}

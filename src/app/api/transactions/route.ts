@@ -11,7 +11,7 @@ export async function GET(request: Request) {
 
   const { data, error } = await supabase
     .from('transactions')
-    .select('*')
+    .select('*, categories(name, emoji, color)')
     .eq('user_id', user.id)
     .order('date', { ascending: false })
     .order('created_at', { ascending: false })
@@ -28,7 +28,21 @@ export async function POST(request: Request) {
 
   try {
     const body = await request.json()
-    const { type, amount, title, date, category } = body
+    const { type, amount, title, date, category_id } = body
+
+    let finalCategoryId = category_id
+    if (!finalCategoryId) {
+      // Find a default category
+      const { data: cat } = await supabase
+        .from('categories')
+        .select('id')
+        .eq('user_id', user.id)
+        .eq('type', type)
+        .limit(1)
+        .single()
+      
+      finalCategoryId = cat?.id || null
+    }
 
     const { data, error } = await supabase
       .from('transactions')
@@ -37,10 +51,10 @@ export async function POST(request: Request) {
         type,
         amount,
         title,
-        category: category || 'General',
+        category_id: finalCategoryId,
         date: date || new Date().toISOString().split('T')[0]
       })
-      .select('*')
+      .select('*, categories(name, emoji, color)')
       .single()
 
     if (error) throw error
