@@ -58,6 +58,34 @@ export async function POST(request: Request) {
       .single()
 
     if (error) {
+      // If the profile is missing (user created before schema.sql was run), create it automatically
+      if (error.message?.includes('transactions_user_id_fkey')) {
+        console.log("Auto-creating missing legacy profile for user:", user.id)
+        await supabase.from('profiles').insert({
+          id: user.id,
+          full_name: user.user_metadata?.full_name || 'User'
+        })
+        
+        // Also auto-create a default category so it doesn't fail
+        const { data: fallbackCat } = await supabase.from('categories').insert({
+          user_id: user.id,
+          name: 'General',
+          type: 'expense'
+        }).select('id').single()
+
+        // Retry the transaction insert
+        const { data: retryData, error: retryError } = await supabase.from('transactions').insert({
+          user_id: user.id,
+          type,
+          amount,
+          title,
+          category_id: fallbackCat?.id,
+          date: date || new Date().toISOString().split('T')[0]
+        }).select('*').single()
+        
+        if (retryError) throw retryError
+        return NextResponse.json(retryData)
+      }
       console.error("SUPABASE INSERT ERROR:", error)
       return NextResponse.json({ error: error.message, details: error.details, hint: error.hint }, { status: 400 })
     }
