@@ -69,8 +69,8 @@ export default function SignupPage() {
       {/* Right side: Editorial/Testimonial */}
       <div className="hidden md:flex md:w-1/2 bg-[#FAFAFA] border-l border-border items-center justify-center p-12">
         <div className="max-w-lg">
-          <div className="inline-block p-4 bg-white rounded-2xl shadow-sm border border-border/50 mb-8">
-            <div className="h-12 w-12 bg-primary/10 rounded-full flex items-center justify-center text-2xl">🚀</div>
+          <div className="inline-block p-4 bg-black rounded-2xl shadow-sm border border-black mb-8">
+            <div className="h-12 w-12 bg-white/10 rounded-full flex items-center justify-center text-2xl">🚀</div>
           </div>
           <h2 className="text-3xl font-bold tracking-tight text-slate-900 leading-tight mb-4">
             &quot;Your money. No cap.&quot;
