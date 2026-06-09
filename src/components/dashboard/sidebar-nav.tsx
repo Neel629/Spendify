@@ -13,8 +13,11 @@ const navLinks = [
   { name: 'Reports', href: '/dashboard/splits', icon: Users },
 ]
 
-export function SidebarNav() {
+export function SidebarNav({ userEmail, userName }: { userEmail?: string; userName?: string }) {
   const pathname = usePathname()
+  
+  const displayName = userName || 'User'
+  const initial = displayName.charAt(0).toUpperCase()
 
   return (
     <>
@@ -54,10 +57,10 @@ export function SidebarNav() {
 
       <div className="p-4 border-t border-border/50">
         <div className="flex items-center gap-3 px-2 py-2">
-          <div className="h-10 w-10 rounded-full bg-emerald-500/20 text-emerald-500 flex items-center justify-center font-bold">N</div>
+          <div className="h-10 w-10 rounded-full bg-emerald-500/20 text-emerald-500 flex items-center justify-center font-bold">{initial}</div>
           <div className="flex-1 overflow-hidden">
-            <p className="text-sm font-semibold text-foreground truncate">Neel Prajapati</p>
-            <p className="text-xs text-muted-foreground truncate">user@email.com</p>
+            <p className="text-sm font-semibold text-foreground truncate">{displayName}</p>
+            <p className="text-xs text-muted-foreground truncate">{userEmail || 'No email provided'}</p>
           </div>
         </div>
         <form action="/auth/logout" method="POST" className="mt-2">

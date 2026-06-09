@@ -20,7 +20,7 @@ export default async function DashboardLayout({
 
   const { data: profile } = await supabase
     .from('profiles')
-    .select('onboarding_completed')
+    .select('onboarding_completed, full_name')
     .eq('id', user.id)
     .single()
 
@@ -37,7 +37,7 @@ export default async function DashboardLayout({
           <div className="font-bold text-xl tracking-tight text-foreground">Spendify</div>
         </div>
         
-        <SidebarNav />
+        <SidebarNav userEmail={user.email} userName={profile?.full_name} />
       </aside>
 
       {/* Main Content */}
