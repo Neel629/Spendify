@@ -1,11 +1,30 @@
 'use client'
 
-import { useEffect } from 'react'
-import { useAppStore } from '@/store/useAppStore'
+import { useEffect, useState } from 'react'
+import { useAppStore, Transaction } from '@/store/useAppStore'
 import { Card } from '@/components/ui/card'
+import { Edit2, Trash2 } from 'lucide-react'
+import { EditTransaction } from '@/components/transactions/edit-transaction'
 
 export default function TransactionsPage() {
-  const { transactions, isLoading, setTransactions } = useAppStore()
+  const { transactions, isLoading, setTransactions, deleteTransaction } = useAppStore()
+  const [editingTx, setEditingTx] = useState<Transaction | null>(null)
+  const [deletingId, setDeletingId] = useState<string | null>(null)
+
+  const handleDelete = async (id: string) => {
+    if (!window.confirm('Are you sure you want to delete this transaction?')) return
+    setDeletingId(id)
+    try {
+      const res = await fetch(`/api/transactions/${id}`, { method: 'DELETE' })
+      if (!res.ok) throw new Error('Failed to delete')
+      deleteTransaction(id)
+    } catch (err) {
+      console.error(err)
+      alert("Error deleting transaction")
+    } finally {
+      setDeletingId(null)
+    }
+  }
 
   useEffect(() => {
     const fetchTx = async () => {
@@ -44,8 +63,18 @@ export default function TransactionsPage() {
                   <p className="text-sm text-muted-foreground font-medium">{new Date(tx.date).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}</p>
                 </div>
               </div>
-              <div className={`text-xl font-mono font-medium ${tx.type === 'income' ? 'text-foreground' : 'text-foreground'}`}>
-                {tx.type === 'income' ? '+' : '-'}₹{tx.amount.toFixed(2)}
+              <div className="flex items-center gap-6">
+                <div className={`text-xl font-mono font-medium ${tx.type === 'income' ? 'text-foreground' : 'text-foreground'}`}>
+                  {tx.type === 'income' ? '+' : '-'}₹{tx.amount.toFixed(2)}
+                </div>
+                <div className="flex items-center gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                  <button onClick={() => setEditingTx(tx)} className="p-2 text-muted-foreground hover:text-emerald-500 hover:bg-emerald-500/10 rounded-full transition-colors">
+                    <Edit2 className="h-4 w-4" />
+                  </button>
+                  <button onClick={() => handleDelete(tx.id)} disabled={deletingId === tx.id} className="p-2 text-muted-foreground hover:text-destructive hover:bg-destructive/10 rounded-full transition-colors disabled:opacity-50">
+                    <Trash2 className="h-4 w-4" />
+                  </button>
+                </div>
               </div>
             </Card>
           ))}
@@ -57,6 +86,9 @@ export default function TransactionsPage() {
             </div>
           )}
         </div>
+      )}
+      {editingTx && (
+        <EditTransaction transaction={editingTx} onClose={() => setEditingTx(null)} />
       )}
     </div>
   )
