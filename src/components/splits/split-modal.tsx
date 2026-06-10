@@ -97,7 +97,11 @@ export function SplitModal({ split, onClose }: SplitModalProps) {
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(payloads)
         })
-        if (!res.ok) throw new Error('Failed to create split(s)')
+        
+        if (!res.ok) {
+          const errorData = await res.json().catch(() => null)
+          throw new Error(errorData?.error || 'Failed to create split(s)')
+        }
         
         const newSplits = await res.json()
         if (Array.isArray(newSplits)) {
@@ -109,7 +113,7 @@ export function SplitModal({ split, onClose }: SplitModalProps) {
       onClose()
     } catch (err: any) {
       console.error(err)
-      alert(err.message)
+      alert(`Error saving split: ${err.message}`)
     } finally {
       setLoading(false)
     }
