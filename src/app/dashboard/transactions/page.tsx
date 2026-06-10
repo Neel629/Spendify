@@ -63,11 +63,11 @@ export default function TransactionsPage() {
                   <p className="text-sm text-muted-foreground font-medium">{new Date(tx.date).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}</p>
                 </div>
               </div>
-              <div className="flex items-center gap-6">
-                <div className={`text-xl font-mono font-medium ${tx.type === 'income' ? 'text-foreground' : 'text-foreground'}`}>
+              <div className="flex items-center gap-3 sm:gap-6">
+                <div className={`text-lg sm:text-xl font-mono font-medium ${tx.type === 'income' ? 'text-foreground' : 'text-foreground'}`}>
                   {tx.type === 'income' ? '+' : '-'}₹{tx.amount.toFixed(2)}
                 </div>
-                <div className="flex items-center gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                <div className="flex items-center gap-1 sm:gap-2">
                   <button onClick={() => setEditingTx(tx)} className="p-2 text-muted-foreground hover:text-emerald-500 hover:bg-emerald-500/10 rounded-full transition-colors">
                     <Edit2 className="h-4 w-4" />
                   </button>
