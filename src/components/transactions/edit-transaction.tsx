@@ -14,20 +14,43 @@ interface EditTransactionProps {
 export function EditTransaction({ transaction, onClose }: EditTransactionProps) {
   const [loading, setLoading] = useState(false)
   const [type, setType] = useState<'expense' | 'income'>(transaction.type)
-  const updateTransaction = useAppStore(state => state.updateTransaction)
+  const { updateTransaction, categories, setCategories } = useAppStore()
+  
+  const [categoryId, setCategoryId] = useState<string>(transaction.category_id || '')
+  const [isCreatingCategory, setIsCreatingCategory] = useState(false)
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
     setLoading(true)
     const formData = new FormData(e.currentTarget)
-    const payload = {
-      title: formData.get('title'),
-      amount: parseFloat(formData.get('amount') as string),
-      type,
-      date: formData.get('date'),
-    }
-
+    
     try {
+      let finalCategoryId = categoryId
+      
+      // If user is creating a custom category
+      if (isCreatingCategory) {
+        const newCatName = formData.get('newCategoryName') as string
+        const newCatEmoji = formData.get('newCategoryEmoji') as string
+        
+        const catRes = await fetch('/api/categories', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ name: newCatName, emoji: newCatEmoji, type })
+        })
+        if (!catRes.ok) throw new Error("Failed to create custom category")
+        const newCat = await catRes.json()
+        setCategories([...categories, newCat])
+        finalCategoryId = newCat.id
+      }
+
+      const payload = {
+        title: formData.get('title'),
+        amount: parseFloat(formData.get('amount') as string),
+        type,
+        date: formData.get('date'),
+        category_id: finalCategoryId || undefined
+      }
+
       const res = await fetch(`/api/transactions/${transaction.id}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
@@ -52,11 +75,12 @@ export function EditTransaction({ transaction, onClose }: EditTransactionProps) 
 
   // Format date correctly for default value
   const txDate = transaction.date ? new Date(transaction.date).toISOString().split('T')[0] : ''
+  const currentCategories = categories.filter(c => c.type === type)
 
   return (
     <div className="fixed inset-0 z-[60] flex items-end sm:items-center justify-center bg-background/80 backdrop-blur-md p-4 animate-in fade-in duration-200">
       <div className="bg-card w-full max-w-md rounded-3xl shadow-2xl border border-border overflow-hidden animate-in slide-in-from-bottom-8 sm:zoom-in-95 duration-300">
-        <div className="p-6">
+        <div className="p-6 max-h-[90vh] overflow-y-auto">
           <div className="flex justify-between items-center mb-6">
             <h2 className="text-xl font-bold tracking-tight text-foreground">Edit Transaction</h2>
             <button onClick={onClose} className="text-muted-foreground hover:text-foreground bg-secondary/50 p-2 rounded-full transition-colors">
@@ -67,14 +91,14 @@ export function EditTransaction({ transaction, onClose }: EditTransactionProps) 
           <div className="flex p-1 mb-8 bg-background border border-border rounded-xl">
             <button 
               type="button"
-              onClick={() => setType('expense')}
+              onClick={() => { setType('expense'); setCategoryId(''); setIsCreatingCategory(false); }}
               className={`flex-1 py-2 rounded-lg text-sm font-semibold transition-all ${type === 'expense' ? 'bg-card shadow-sm text-foreground' : 'text-muted-foreground hover:text-foreground'}`}
             >
               Expense
             </button>
             <button 
               type="button"
-              onClick={() => setType('income')}
+              onClick={() => { setType('income'); setCategoryId(''); setIsCreatingCategory(false); }}
               className={`flex-1 py-2 rounded-lg text-sm font-semibold transition-all ${type === 'income' ? 'bg-card shadow-sm text-foreground' : 'text-muted-foreground hover:text-foreground'}`}
             >
               Income
@@ -85,7 +109,7 @@ export function EditTransaction({ transaction, onClose }: EditTransactionProps) 
             <div>
               <Label className="text-muted-foreground text-xs uppercase tracking-wider font-semibold mb-2 block">Amount</Label>
               <div className="flex items-center text-4xl font-light text-foreground border-b border-border/60 pb-2 transition-colors focus-within:border-emerald-500">
-                <span className="text-muted-foreground mr-2">$</span>
+                <span className="text-muted-foreground mr-2">₹</span>
                 <input 
                   name="amount" 
                   type="number" 
@@ -108,6 +132,51 @@ export function EditTransaction({ transaction, onClose }: EditTransactionProps) 
                 placeholder="e.g. Morning Coffee" 
                 className="w-full h-12 px-4 rounded-xl bg-background border border-border text-foreground focus:outline-none focus:ring-1 focus:ring-emerald-500 transition-all placeholder:text-muted-foreground/50" 
               />
+            </div>
+
+            <div className="space-y-2">
+              <Label className="text-muted-foreground text-xs uppercase tracking-wider font-semibold">Category</Label>
+              {!isCreatingCategory ? (
+                <select 
+                  value={categoryId} 
+                  onChange={(e) => {
+                    if (e.target.value === 'new') {
+                      setIsCreatingCategory(true)
+                      setCategoryId('')
+                    } else {
+                      setCategoryId(e.target.value)
+                    }
+                  }}
+                  className="w-full h-12 px-4 rounded-xl bg-background border border-border text-foreground focus:outline-none focus:ring-1 focus:ring-emerald-500 transition-all"
+                >
+                  <option value="" disabled>Select a category</option>
+                  {currentCategories.map(c => (
+                    <option key={c.id} value={c.id}>{c.emoji} {c.name}</option>
+                  ))}
+                  <option value="new">+ Create Custom Category</option>
+                </select>
+              ) : (
+                <div className="flex gap-2 animate-in slide-in-from-top-2 duration-300">
+                  <input 
+                    name="newCategoryEmoji" 
+                    type="text" 
+                    required={isCreatingCategory} 
+                    placeholder="🍔" 
+                    className="w-16 h-12 text-center rounded-xl bg-background border border-border text-foreground focus:outline-none focus:ring-1 focus:ring-emerald-500 transition-all" 
+                    maxLength={2}
+                  />
+                  <input 
+                    name="newCategoryName" 
+                    type="text" 
+                    required={isCreatingCategory} 
+                    placeholder="New category name" 
+                    className="flex-1 h-12 px-4 rounded-xl bg-background border border-border text-foreground focus:outline-none focus:ring-1 focus:ring-emerald-500 transition-all" 
+                  />
+                  <button type="button" onClick={() => setIsCreatingCategory(false)} className="text-muted-foreground hover:text-foreground px-2">
+                    <X className="w-5 h-5" />
+                  </button>
+                </div>
+              )}
             </div>
 
             <div className="space-y-2">

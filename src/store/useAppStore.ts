@@ -29,6 +29,14 @@ export type Transaction = {
   updated_at: string
 }
 
+export type Category = {
+  id: string
+  name: string
+  emoji: string
+  type: string
+  color: string
+}
+
 interface AppState {
   transactions: Transaction[]
   isLoading: boolean
@@ -38,6 +46,8 @@ interface AppState {
   deleteTransaction: (id: string) => void
   splits: Split[]
   isSplitsLoading: boolean
+  categories: Category[]
+  setCategories: (categories: Category[]) => void
   setSplitsLoading: (loading: boolean) => void
   setSplits: (splits: Split[]) => void
   addSplit: (split: Split) => void
@@ -63,6 +73,8 @@ export const useAppStore = create<AppState>((set) => ({
     })),
   splits: [],
   isSplitsLoading: true,
+  categories: [],
+  setCategories: (categories) => set({ categories }),
   setSplitsLoading: (loading) => set({ isSplitsLoading: loading }),
   setSplits: (splits) => set({ splits, isSplitsLoading: false }),
   addSplit: (split) => 

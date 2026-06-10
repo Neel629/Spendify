@@ -41,6 +41,13 @@ export default function DashboardHome() {
         }
       }
 
+      // Fetch Categories
+      try {
+        const cRes = await fetch('/api/categories')
+        const cData = await cRes.json()
+        if (Array.isArray(cData)) useAppStore.getState().setCategories(cData)
+      } catch {}
+
       // Fetch Budgets
       try {
         const bRes = await fetch('/api/budgets')
