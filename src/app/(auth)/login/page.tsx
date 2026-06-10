@@ -70,7 +70,6 @@ export default function LoginPage() {
           <div className="inline-block p-4 bg-white rounded-2xl shadow-sm border border-slate-200 mb-8">
             <img src="/logo.jpg" alt="Spendify" className="h-12 w-12 rounded-lg" />
           </div>
-          </div>
           <h2 className="text-3xl font-bold tracking-tight text-slate-900 leading-tight mb-4">
             &quot;Finally, an expense tracker that doesn&apos;t feel like a spreadsheet.&quot;
           </h2>
