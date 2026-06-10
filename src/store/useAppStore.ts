@@ -1,5 +1,16 @@
 import { create } from 'zustand'
 
+export type Split = {
+  id: string
+  user_id: string
+  friend_name: string
+  remark: string
+  amount: number
+  type: 'you_owe' | 'owed_to_you'
+  status: 'pending' | 'settled'
+  date: string
+  created_at: string
+}
 export type Transaction = {
   id: string
   user_id: string
@@ -25,6 +36,12 @@ interface AppState {
   addTransaction: (transaction: Transaction) => void
   updateTransaction: (id: string, updatedTransaction: Partial<Transaction>) => void
   deleteTransaction: (id: string) => void
+  splits: Split[]
+  isSplitsLoading: boolean
+  setSplits: (splits: Split[]) => void
+  addSplit: (split: Split) => void
+  updateSplit: (id: string, updatedSplit: Partial<Split>) => void
+  deleteSplit: (id: string) => void
 }
 
 export const useAppStore = create<AppState>((set) => ({
@@ -42,5 +59,20 @@ export const useAppStore = create<AppState>((set) => ({
   deleteTransaction: (id) => 
     set((state) => ({
       transactions: state.transactions.filter((t) => t.id !== id)
+    })),
+  splits: [],
+  isSplitsLoading: true,
+  setSplits: (splits) => set({ splits, isSplitsLoading: false }),
+  addSplit: (split) => 
+    set((state) => ({ 
+      splits: [split, ...state.splits].sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
+    })),
+  updateSplit: (id, updated) => 
+    set((state) => ({
+      splits: state.splits.map((s) => (s.id === id ? { ...s, ...updated } : s))
+    })),
+  deleteSplit: (id) => 
+    set((state) => ({
+      splits: state.splits.filter((s) => s.id !== id)
     })),
 }))
