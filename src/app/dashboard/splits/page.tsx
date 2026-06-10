@@ -74,14 +74,14 @@ export default function SplitsPage() {
     <div className="space-y-8 animate-in fade-in duration-500">
       <div className="flex justify-between items-end">
         <div>
-          <h1 className="text-4xl font-bold tracking-tight text-foreground">Squad Splits</h1>
+          <h1 className="text-4xl font-bold tracking-tight text-foreground">Settlements</h1>
           <p className="text-muted-foreground mt-2">Track who owes you and settle up.</p>
         </div>
-        <Button 
+        <Button
           onClick={() => {
             setEditingSplit(null)
             setIsModalOpen(true)
-          }} 
+          }}
           className="font-semibold gap-2 rounded-xl h-12 px-6"
         >
           <Plus className="h-4 w-4" /> New Split
@@ -101,7 +101,7 @@ export default function SplitsPage() {
             ) : (
               <>
                 <p className="text-muted-foreground font-medium">No one owes you right now.</p>
-                <p className="text-sm text-muted-foreground mt-1">Create a split when you pay for the squad.</p>
+                <p className="text-sm text-muted-foreground mt-1">Create a settlement when you pay or when they pay.</p>
               </>
             )}
           </div>
@@ -127,7 +127,7 @@ export default function SplitsPage() {
       </div>
 
       <h2 className="text-2xl font-bold text-foreground pt-4">Recent Splits</h2>
-      
+
       {isSplitsLoading ? (
         <div className="space-y-4">
           {[1, 2].map(i => (
@@ -147,12 +147,12 @@ export default function SplitsPage() {
                     {split.friend_name} <span className="text-muted-foreground font-normal text-base ml-1">· {split.remark}</span>
                   </p>
                   <p className="text-sm text-muted-foreground font-medium">
-                    {new Date(split.date).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })} 
+                    {new Date(split.date).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
                     {split.status === 'settled' && <span className="ml-2 text-emerald-500">✓ Settled</span>}
                   </p>
                 </div>
               </div>
-              
+
               <div className="flex items-center justify-between w-full sm:w-auto sm:justify-end gap-3 sm:gap-6">
                 <div className={`text-lg sm:text-xl font-mono font-medium ${split.type === 'owed_to_you' ? 'text-emerald-500' : 'text-destructive'}`}>
                   {split.type === 'owed_to_you' ? '+' : '-'}₹{Number(split.amount).toFixed(2)}
@@ -187,12 +187,12 @@ export default function SplitsPage() {
       )}
 
       {isModalOpen && (
-        <SplitModal 
-          split={editingSplit || undefined} 
+        <SplitModal
+          split={editingSplit || undefined}
           onClose={() => {
             setIsModalOpen(false)
             setEditingSplit(null)
-          }} 
+          }}
         />
       )}
     </div>

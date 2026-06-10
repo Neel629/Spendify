@@ -25,16 +25,16 @@ export default function Home() {
           <div className="inline-flex items-center rounded-full border border-border bg-secondary/50 px-3 py-1 text-sm font-medium text-muted-foreground mb-4 backdrop-blur-sm">
             Finance without the noise.
           </div>
-          
+
           <h1 className="text-6xl md:text-8xl font-black tracking-tighter text-foreground leading-[1.1]">
             Your money.<br />
             <span className="text-muted-foreground font-normal">No cap.</span>
           </h1>
-          
+
           <p className="text-lg md:text-xl text-muted-foreground max-w-xl mx-auto leading-relaxed">
-            The ultra-minimal expense tracker. Track spending, split bills with the squad, and hit your savings goals.
+            The ultra-minimal expense tracker. Track spending, Settle bills with the squad, and hit your savings goals.
           </p>
-          
+
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4 pt-4">
             <Link href="/signup" className="w-full sm:w-auto">
               <Button size="lg" className="w-full sm:w-auto h-14 px-8 text-lg font-semibold rounded-2xl">

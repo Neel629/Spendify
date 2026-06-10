@@ -28,8 +28,31 @@ export async function POST(request: Request) {
 
   try {
     const body = await request.json()
-    const { friend_name, remark, amount, type, date, status } = body
+    const defaultDate = new Date().toISOString().split('T')[0]
 
+    // Handle array of splits (New Bulk Split mode)
+    if (Array.isArray(body)) {
+      const inserts = body.map(split => ({
+        user_id: user.id,
+        friend_name: split.friend_name,
+        remark: split.remark,
+        amount: split.amount,
+        type: split.type,
+        status: split.status || 'pending',
+        date: split.date || defaultDate
+      }))
+
+      const { data, error } = await supabase
+        .from('splits')
+        .insert(inserts)
+        .select('*')
+
+      if (error) throw error
+      return NextResponse.json(data)
+    }
+
+    // Fallback: Handle single split (Edit/Legacy mode)
+    const { friend_name, remark, amount, type, date, status } = body
     const { data, error } = await supabase
       .from('splits')
       .insert({
@@ -39,16 +62,12 @@ export async function POST(request: Request) {
         amount,
         type,
         status: status || 'pending',
-        date: date || new Date().toISOString().split('T')[0]
+        date: date || defaultDate
       })
       .select('*')
       .single()
 
-    if (error) {
-      console.error("Split insert error:", error)
-      return NextResponse.json({ error: error.message }, { status: 400 })
-    }
-
+    if (error) throw error
     return NextResponse.json(data)
   } catch (error: any) {
     console.error("Server error:", error)
