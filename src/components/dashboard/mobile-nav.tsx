@@ -31,7 +31,7 @@ export function MobileNav() {
             <Menu className="h-6 w-6" />
           </button>
           <div className="flex items-center gap-2">
-            <div className="text-emerald-500 text-lg">🌱</div>
+            <img src="/logo.jpg" alt="Spendify" className="h-7 w-7 rounded-lg" />
             <div className="font-bold text-lg tracking-tight text-foreground">Spendify</div>
           </div>
         </div>
@@ -42,7 +42,7 @@ export function MobileNav() {
         <div className="md:hidden fixed inset-0 z-50 bg-background flex flex-col animate-in slide-in-from-left-full duration-300">
           <div className="p-4 flex items-center justify-between border-b border-border">
             <div className="flex items-center gap-2">
-              <div className="text-emerald-500 text-lg">🌱</div>
+              <img src="/logo.jpg" alt="Spendify" className="h-7 w-7 rounded-lg" />
               <div className="font-bold text-lg tracking-tight text-foreground">Menu</div>
             </div>
             <button 

@@ -28,9 +28,7 @@ export default function OnboardingPage() {
       <div className="w-full max-w-lg">
         {/* Header */}
         <div className="text-center mb-10">
-          <div className="inline-flex items-center justify-center h-16 w-16 rounded-2xl bg-emerald-500/10 mb-6">
-            <span className="text-3xl">🌱</span>
-          </div>
+          <img src="/logo.jpg" alt="Spendify" className="h-16 w-16 rounded-2xl shadow-sm mb-6" />
           <h1 className="text-3xl font-bold tracking-tight text-foreground mb-2">
             Welcome to Spendify
           </h1>

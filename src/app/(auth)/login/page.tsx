@@ -29,7 +29,10 @@ export default function LoginPage() {
       <div className="flex w-full flex-col justify-center px-8 sm:px-12 md:w-1/2 lg:px-24 xl:px-32">
         <div className="mx-auto w-full max-w-sm">
           <div className="mb-10">
-            <Link href="/" className="inline-block mb-8 text-2xl font-black tracking-tighter text-primary">Spendify.</Link>
+            <Link href="/" className="inline-flex items-center gap-2 mb-8">
+              <img src="/logo.jpg" alt="Spendify" className="h-8 w-8 rounded-lg" />
+              <span className="text-2xl font-black tracking-tighter text-foreground">Spendify</span>
+            </Link>
             <h1 className="text-3xl font-bold tracking-tight text-foreground">Welcome back</h1>
             <p className="mt-2 text-base text-muted-foreground">Please enter your details to sign in.</p>
           </div>
@@ -65,7 +68,8 @@ export default function LoginPage() {
       <div className="hidden md:flex md:w-1/2 bg-[#FAFAFA] border-l border-border items-center justify-center p-12">
         <div className="max-w-lg">
           <div className="inline-block p-4 bg-white rounded-2xl shadow-sm border border-slate-200 mb-8">
-            <div className="h-12 w-12 bg-emerald-500/10 rounded-full flex items-center justify-center text-2xl">✨</div>
+            <img src="/logo.jpg" alt="Spendify" className="h-12 w-12 rounded-lg" />
+          </div>
           </div>
           <h2 className="text-3xl font-bold tracking-tight text-slate-900 leading-tight mb-4">
             &quot;Finally, an expense tracker that doesn&apos;t feel like a spreadsheet.&quot;

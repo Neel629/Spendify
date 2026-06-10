@@ -17,7 +17,7 @@ export const dynamic = 'force-dynamic'
 export const revalidate = 0
 
 export const metadata: Metadata = {
-  title: "Spendify - Gen-Z Expense Tracker",
+  title: "Spendify",
   description: "Your money. No cap. A minimal Gen-Z expense tracker.",
 };
 

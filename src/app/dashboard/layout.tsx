@@ -37,7 +37,7 @@ export default async function DashboardLayout({
       {/* Sidebar */}
       <aside className="w-full md:w-[260px] border-r border-border bg-background hidden md:flex flex-col sticky top-0 h-screen">
         <div className="p-6 flex items-center gap-3">
-          <div className="text-emerald-500">🌱</div>
+          <img src="/logo.jpg" alt="Spendify" className="h-9 w-9 rounded-lg" />
           <div className="font-bold text-xl tracking-tight text-foreground">Spendify</div>
         </div>
         <SidebarNav userEmail={user.email} userName={profile?.full_name || user?.user_metadata?.full_name} />
@@ -47,9 +47,22 @@ export default async function DashboardLayout({
       <MobileNav />
 
       {/* Main Content */}
-      <main className="flex-1 p-6 md:p-12 pb-24 md:pb-12 max-w-7xl mx-auto w-full">
-        {children}
-      </main>
+      <div className="flex-1 flex flex-col">
+        <main className="flex-1 p-6 md:p-12 pb-24 md:pb-12 max-w-7xl mx-auto w-full">
+          {children}
+        </main>
+        
+        {/* Footer */}
+        <footer className="border-t border-border py-4 px-6 md:px-12">
+          <div className="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-2">
+            <div className="flex items-center gap-2">
+              <img src="/logo.jpg" alt="Spendify" className="h-5 w-5 rounded" />
+              <span className="text-xs text-muted-foreground font-medium">Spendify</span>
+            </div>
+            <p className="text-xs text-muted-foreground">Made by <span className="text-foreground font-semibold">Neel Prajapati</span></p>
+          </div>
+        </footer>
+      </div>
       
       {/* Global Quick Add button */}
       <QuickAdd />
