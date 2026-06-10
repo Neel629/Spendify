@@ -262,12 +262,29 @@ export function SplitModal({ split, onClose }: SplitModalProps) {
                   <Label className="text-muted-foreground text-xs uppercase tracking-wider font-semibold">Split With (Comma Separated)</Label>
                   <input 
                     name="friends" 
+                    id="friends-input"
                     type="text" 
                     required 
                     placeholder="e.g. Alex, Sarah, John" 
+                    onChange={(e) => {
+                      const count = e.target.value.split(',').filter(f => f.trim().length > 0).length;
+                      const totalInput = document.querySelector('input[name="totalAmount"]') as HTMLInputElement;
+                      const total = parseFloat(totalInput?.value || '0');
+                      const previewNode = document.getElementById('split-preview');
+                      if (previewNode) {
+                        if (count > 0 && total > 0) {
+                          const perPerson = total / (count + 1);
+                          previewNode.textContent = `Splitting ₹${total} among ${count + 1} people (You + ${count} friends) = ₹${perPerson.toFixed(2)} each.`;
+                        } else {
+                          previewNode.textContent = "List everyone sharing this bill. You are automatically included.";
+                        }
+                      }
+                    }}
                     className="w-full h-12 px-4 rounded-xl bg-background border border-border text-foreground focus:outline-none focus:ring-1 focus:ring-emerald-500 transition-all placeholder:text-muted-foreground/50" 
                   />
-                  <p className="text-xs text-muted-foreground">List everyone sharing this bill. You are automatically included.</p>
+                  <p id="split-preview" className="text-xs font-medium text-emerald-500 mt-2">
+                    List everyone sharing this bill. You are automatically included.
+                  </p>
                 </div>
               </>
             )}

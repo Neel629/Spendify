@@ -38,6 +38,7 @@ interface AppState {
   deleteTransaction: (id: string) => void
   splits: Split[]
   isSplitsLoading: boolean
+  setSplitsLoading: (loading: boolean) => void
   setSplits: (splits: Split[]) => void
   addSplit: (split: Split) => void
   updateSplit: (id: string, updatedSplit: Partial<Split>) => void
@@ -62,6 +63,7 @@ export const useAppStore = create<AppState>((set) => ({
     })),
   splits: [],
   isSplitsLoading: true,
+  setSplitsLoading: (loading) => set({ isSplitsLoading: loading }),
   setSplits: (splits) => set({ splits, isSplitsLoading: false }),
   addSplit: (split) => 
     set((state) => ({ 

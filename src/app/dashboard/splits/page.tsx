@@ -19,8 +19,10 @@ export default function SplitsPage() {
         const res = await fetch('/api/splits')
         const data = await res.json()
         if (Array.isArray(data)) setSplits(data)
+        else useAppStore.getState().setSplitsLoading(false)
       } catch (err) {
         console.error("Failed to load splits", err)
+        useAppStore.getState().setSplitsLoading(false)
       }
     }
     fetchSplits()
